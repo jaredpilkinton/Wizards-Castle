@@ -1,0 +1,9 @@
+{
+  "name": "The Wizard's Castle",
+  "short_name": "Wizard's Castle",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#050505",
+  "theme_color": "#050505",
+  "description": "An iPad-friendly recreation of Joseph R. Power's classic Wizard's Castle."
+}
