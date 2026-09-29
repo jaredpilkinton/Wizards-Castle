@@ -88,7 +88,7 @@ function resolvePassive(r){
  if(r.curse){G.curses[r.curse-1]=true;out(["","YOU FEEL A TERRIBLE LETHARGY.","A LEECHING CURSE CLINGS TO YOU.","A FOG OF FORGETFULNESS CLOUDS YOUR MIND."][r.curse])}
 }
 function tick(){G.turn++;if(G.curses[1]&&!G.treasures.includes(2))G.gp=Math.max(0,G.gp-roll(5));if(G.curses[2]&&!G.treasures.includes(4)){let z=R(8),x=R(8),y=R(8);room(x,y,z).seen=false}}
-function move(dx,dy,dir){let r=room(G.x,G.y,G.z);if(r.c==="M"){out("THE MONSTER BLOCKS YOUR WAY. ATTACK OR FLEE ANOTHER DIRECTION.");}
+function move(dx,dy,dir){let r=room(G.x,G.y,G.z);if(r.c==="M"){out("THE MONSTER BLOCKS YOUR WAY. ATTACK OR FLEE ANOTHER DIRECTION.");return}if(r.c==="V"&&G.vendorsAngry){out("THE ANGRY VENDOR BLOCKS YOUR WAY. ATTACK OR BRIBE.");return}
  if(G.z===0&&G.x===3&&G.y===0&&dir==="N"){if(G.orb){out("");out("*** YOU EMERGE WITH THE ORB OF ZOT! ***");out(`VICTORY IN ${G.turn} TURNS.`);mode="won";localStorage.removeItem("wcastle-save");return}else{out("YOU CANNOT ABANDON THE QUEST SO EASILY.");return}}
  G.x=(G.x+dx+8)%8;G.y=(G.y+dy+8)%8;G.lastDir=dir;tick();describe();save()
 }
