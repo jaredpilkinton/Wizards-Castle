@@ -88,9 +88,9 @@ function resolvePassive(r){
  if(r.curse){G.curses[r.curse-1]=true;out(["","YOU FEEL A TERRIBLE LETHARGY.","A LEECHING CURSE CLINGS TO YOU.","A FOG OF FORGETFULNESS CLOUDS YOUR MIND."][r.curse])}
 }
 function tick(){G.turn++;if(G.curses[1]&&!G.treasures.includes(2))G.gp=Math.max(0,G.gp-roll(5));if(G.curses[2]&&!G.treasures.includes(4)){let z=R(8),x=R(8),y=R(8);room(x,y,z).seen=false}}
-function move(dx,dy,dir){let r=room(G.x,G.y,G.z);if(r.c==="M"){out("THE MONSTER BLOCKS YOUR WAY. ATTACK OR FLEE ANOTHER DIRECTION.");return}if(r.c==="V"&&G.vendorsAngry){out("THE ANGRY VENDOR BLOCKS YOUR WAY. ATTACK OR BRIBE.");return}
+function move(dx,dy,dir){let r=room(G.x,G.y,G.z);if(r.c==="M"){let nx=(G.x+dx+8)%8,ny=(G.y+dy+8)%8;if(nx!==r.fleeX||ny!==r.fleeY){out("THE MONSTER BLOCKS YOUR WAY. ATTACK OR FLEE BACK THE WAY YOU CAME.");return}delete r.fleeX;delete r.fleeY}if(r.c==="V"&&G.vendorsAngry){out("THE ANGRY VENDOR BLOCKS YOUR WAY. ATTACK OR BRIBE.");return}
  if(G.z===0&&G.x===3&&G.y===0&&dir==="N"){if(G.orb){out("");out("*** YOU EMERGE WITH THE ORB OF ZOT! ***");out(`VICTORY IN ${G.turn} TURNS.`);mode="won";localStorage.removeItem("wcastle-save");return}else{out("YOU CANNOT ABANDON THE QUEST SO EASILY.");return}}
- G.x=(G.x+dx+8)%8;G.y=(G.y+dy+8)%8;G.lastDir=dir;tick();describe();save()
+ let ox=G.x,oy=G.y;G.x=(G.x+dx+8)%8;G.y=(G.y+dy+8)%8;G.lastDir=dir;let nr=room(G.x,G.y,G.z);if(nr.c==="M"){nr.fleeX=ox;nr.fleeY=oy}tick();describe();save()
 }
 function stairs(up){let r=room(G.x,G.y,G.z);if(up&&r.c==="U"){G.z--;tick();describe()}else if(!up&&r.c==="D"){G.z++;tick();describe()}else out("THERE ARE NO STAIRS THAT WAY.");save()}
 function attack(){let r=room(G.x,G.y,G.z);if(r.c==="V"){attackVendor();return}if(r.c!=="M"){out("THERE IS NOTHING HERE TO ATTACK.");return}let m=r.monster,hp=m+2;out(`YOU ATTACK THE ${monsterNames[m-1]}!`);while(hp>0&&G.hp>0){let hit=roll(20)+Math.floor(G.dx/3);if(hit>=10+m){let dmg=Math.max(1,G.weapon+roll(Math.max(1,Math.floor(G.st/4))));hp-=dmg;out(`YOU HIT FOR ${dmg}.`)}else out("YOU MISS.");if(hp>0){let dmg=Math.max(0,1+Math.floor(m/2)-G.armor);G.hp-=dmg;G.dur-=Math.min(G.armor,1+Math.floor(m/2));out(`IT HITS YOU FOR ${dmg}.`);if(G.dur<=0&&G.armor){G.armor=0;out("YOUR ARMOR IS DESTROYED!")}}}
